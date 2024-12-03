@@ -1,5 +1,5 @@
 - name: create ec2
-  hosts: localhost
+  hosts: local
   connection: local
   vars:
     subnet_id: "subnet-0e4484507d91658f3"
