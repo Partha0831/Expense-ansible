@@ -23,7 +23,7 @@
       vpc_subnet_id: "{{ subnet_id }}"
       instance_type: "t2.micro"
       security_group: "{{ sg_group }}"
-      img_id: "{{ img_id }}"
+      image_id: "{{ img_id }}"
     loop: "{{ instances }}"
     register: ec2_instances
   - name: print ec2 info
