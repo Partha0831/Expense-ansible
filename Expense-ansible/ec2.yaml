@@ -10,7 +10,6 @@
     - backend
     - frontend
     zone: "devopspractice.in"
-
   tasks:
   - name: install dependies
     ansible.builtin.pip:
