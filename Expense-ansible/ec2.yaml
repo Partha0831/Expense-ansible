@@ -28,7 +28,7 @@
     register: ec2_instances
   - name: print ec2 info
     ansible.builtin.debug:
-      msg: "{{ ec2_instance }}"      
+      msg: "{{ ec2_instances }}"      
   - name: create route 53 and update private ip address
     amazon.aws.route53:
       state: present
