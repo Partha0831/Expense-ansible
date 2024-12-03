@@ -1,0 +1,52 @@
+- name: create ec2
+  hosts: localhost
+  connection: local
+  vars:
+    subnet_id: "subnet-0e4484507d91658f3"
+    sg_group: "sg-08f194a41e22e908b"
+    img_id: "ami-09c813fb71547fc4f"
+    instances:
+    - mysql
+    - backend
+    - frontend
+    zone: "devopspractice.in"
+
+  tasks:
+  - name: install dependies
+    ansible.builtin.pip:
+    - boto3
+    - botocore
+    executable: pip3.9
+  - name: create ec2 instance
+    amazon.aws.ec2_instance:
+      name: "{{ item }}"
+      vpc_subnet_id: "{{ subnet_id }}"
+      instance_type: "t2.micro"
+      security_group: "{{ sg_group }}"
+      img_id: "{{ img_id }}"
+      loop: "{{ instances }}"
+      register: ec2_instances
+  - name: create route 53 and update private ip address
+    amazon.aws.route53:
+      state: present
+      zone: "{{ zone }}"
+      record: "{{ item.item }}.{{ zone }}"
+      type: A
+      value: "{{ item.instances[0].private_ip_address }}"
+      wait: true
+      overwrite: true
+    loop: "{{ ec2_instances.results }}"
+  - name: create route 53 and update Public ip address
+    amazon.aws.route53:
+      state: present
+      zone: "{{ zone }}"
+      record: "{{ zone }}"
+      type: A
+      value: "{{ item.instances[0].public_ip_address }}"
+      wait: true
+      overwrite: true
+    loop: "{{ ec2_instances.results }}" 
+    when: item.item == "frontend"
+
+
+
