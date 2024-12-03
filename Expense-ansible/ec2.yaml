@@ -13,6 +13,7 @@
   tasks:
   - name: install dependies
     ansible.builtin.pip:
+    name:
     - boto3
     - botocore
     executable: pip3.9
