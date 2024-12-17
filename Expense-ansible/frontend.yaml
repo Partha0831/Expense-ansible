@@ -1,0 +1,38 @@
+- name: set up front end
+  hosts: frontend.devopspractice.in
+  become: true
+  tasks:
+    - name:
+      ansible.builtin.package:
+        name: nginx
+        state: present
+    - name: Start service nginx, if not started
+      ansible.builtin.service:
+        name: nginx
+        state: started    
+        enabled: yes
+    - name: Remove folder
+      ansible.builtin.file:
+        path: /usr/share/nginx/html
+        state: absent   
+    - name: create folder
+      ansible.builtin.file:
+        path: /usr/share/nginx/html
+        state: present   
+    - name: Download source code
+      ansible.builtin.get_url:
+        url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+        dest: /tmp/frontend.zip
+    - name: unzip folder  
+      ansible.builtin.unarchive: 
+        src: /tmp/frontend.zip
+        dest: /usr/share/nginx/html
+        remote_src: yes  
+    - name : copy configuration file
+      ansible.builtin.copy:
+        src: expense.conf
+        dest: /etc/nginx/default.d/expense.conf  
+    - name: restarted
+      ansible.builtin.service:
+        name: nginx
+        state: restarted                   
